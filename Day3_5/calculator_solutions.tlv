@@ -14,10 +14,12 @@
    |calc
    $reset = *reset;
    
-   // assigning random signals
+   // assigning random signal
    $in1[31:0] = $rand1[3:0];
-   $in2[31:0] = $rand2[3:0];
-   $op[1:0] = $rand3[1:0];
+   $op[1:0] = $rand2[1:0];
+   // assigning previous output to one of the inputs
+   // >>1$out[31:0] -> output in the previous clock cycle
+   $in2[31:0] = >>1$out[31:0];
    
    // opcode : 2 bits -> can accomodate 4 operations
    // add, sub, mul, and div
@@ -29,10 +31,10 @@
 
    // 4:1 mux to deocode the opcode and 
    //output the corresponding result
-   $out[31:0] = ($op[1:0]==2'b00) ? $sum  : 
-                ($op[1:0]==2'b01) ? $diff :
-                ($op[1:0]==2'b10) ? $prod :
-                $quot;
+   $out[31:0] = $reset ? 32'b0 : (($op[1:0]==2'b00) ? $sum  : 
+                                  ($op[1:0]==2'b01) ? $diff :
+                                  ($op[1:0]==2'b10) ? $prod :
+                                  $quot);
    //...
 
    // Assert these to end simulation (before Makerchip cycle limit).
