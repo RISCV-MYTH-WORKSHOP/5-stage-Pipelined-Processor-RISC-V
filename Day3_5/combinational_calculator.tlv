@@ -17,7 +17,7 @@
    // assigning random signals
    $in1[31:0] = $rand1[3:0];
    $in2[31:0] = $rand2[3:0];
-   $opcode[1:0] = $rand3[1:0];
+   $op[1:0] = $rand3[1:0];
    
    // opcode : 2 bits -> can accomodate 4 operations
    // add, sub, mul, and div
