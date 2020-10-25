@@ -29,7 +29,7 @@
         $cnt = $reset ? 0 : >>1$cnt + 1;
         
         // output
-        $out[31:0] = ($reset|!$num) ? 32'b0 : 
+        $out[31:0] = $reset ? 32'b0 : 
                      (($op[1:0]==2'b00) ? $sum :
                      ($op[1:0]==2'b01) ? $diff :
                      ($op[1:0]==2'b10) ? $prod : 
