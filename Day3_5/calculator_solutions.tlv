@@ -14,13 +14,26 @@
    |calc
       @1
         $reset = *reset;
+        // input signals
+        $val1[31:0] = >>1$out[31:0];
+        $val2[31:0] = $rand2[3:0];
+        $op[1:0] = $rand3[1:0];
         
-        $a_sq[31:0] = $a * $a;
-        $b_sq[31:0] = $b * $b;
-      @2
-        $c_sq[31:0] = $a_sq + $b_sq;
-      @3
-        $c[31:0] = sqrt($c_sq);
+        // operations
+        $sum[31:0] = $val1[31:0] + $val2[31:0];
+        $diff[31:0] = $val1[31:0] - $val2[31:0];
+        $prod[31:0] = $val1[31:0] * $val2[31:0];
+        $quot[31:0] = $val1[31:0] / $val2[31:0];
+        
+        //counter
+        $cnt = $reset ? 0 : >>1$cnt + 1;
+        
+        // output
+        $out[31:0] = ($reset|!$num) ? 32'b0 : 
+                     (($op[1:0]==2'b00) ? $sum :
+                     ($op[1:0]==2'b01) ? $diff :
+                     ($op[1:0]==2'b10) ? $prod : 
+                     $quot);
    //...
 
    // Assert these to end simulation (before Makerchip cycle limit).
