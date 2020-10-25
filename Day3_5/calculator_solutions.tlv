@@ -35,7 +35,7 @@
             $mem[31:0] = $reset ? 0 :
                          ($op[2:0] == 3'b101) ? $val1 : >>2$mem ;
                          
-            $out [31:0] = $reset ? 0 :
+            $out [31:0] = $valid_or_reset ? 0 :
                           ($op[2:0] == 3'b000) ? $sum :
                           ($op[2:0] == 3'b001) ? $diff :
                           ($op[2:0] == 3'b010) ? $prod :
