@@ -15,26 +15,32 @@
       // assigning reset and valid signals
       @1
          $reset = *reset;
+         
+         $val1[31:0] = >>2$out[31:0];
+         $val2[31:0] = $rand1[3:0];
+         $op[2:0]    = $rand2[2:0];
+            
          $valid = $reset ? 0 : >>1$valid + 1;
-         $valid_or_reset = $valid | $reset;
+         $valid_or_reset = $valid || $reset;
          
       ?$valid
          // will run only when $valid is asserted
          @1
-            $val1[31:0] = >>2$out[31:0];
-            $val2[31:0] = $rand1[3:0];
-            $op[1:0]    = $rand2[1:0];
-            
             $sum[31:0]  = $val1[31:0] + $val2[31:0];
             $diff[31:0] = $val1[31:0] - $val2[31:0];
             $prod[31:0] = $val1[31:0] * $val2[31:0];
             $quot[31:0] = $val1[31:0] / $val2[31:0];  
             
          @2
-            $out[31:0] = $valid_or_reset ? (($op[1:0]==2'b00) ? $sum :
-                                           ($op[1:0]==2'b01) ? $diff :
-                                           ($op[1:0]==2'b10) ? $prod : 
-                                           $quot) : >>1$out[31:0];
+            $mem[31:0] = $reset ? 0 :
+                         ($op[2:0] == 3'b101) ? $val1 : >>2$mem ;
+                         
+            $out [31:0] = $reset ? 0 :
+                          ($op[2:0] == 3'b000) ? $sum :
+                          ($op[2:0] == 3'b001) ? $diff :
+                          ($op[2:0] == 3'b010) ? $prod :
+                          ($op[2:0] == 3'b011) ? $quot :
+                          ($op[2:0] == 3'b100) ? >>2$mem : >>2$out ;
    //...
 
    // Assert these to end simulation (before Makerchip cycle limit).
