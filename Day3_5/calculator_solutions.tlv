@@ -15,7 +15,7 @@
       @1
         $reset = *reset;
         // input signals
-        $val1[31:0] = >>1$out[31:0];
+        $val1[31:0] = >>2$out[31:0];
         $val2[31:0] = $rand2[3:0];
         $op[1:0] = $rand3[1:0];
         
@@ -28,8 +28,9 @@
         //counter
         $cnt = $reset ? 0 : >>1$cnt + 1;
         
+      @2  
         // output
-        $out[31:0] = $reset ? 32'b0 : 
+        $out[31:0] = ($reset|!$cnt) ? 32'b0 : 
                      (($op[1:0]==2'b00) ? $sum :
                      ($op[1:0]==2'b01) ? $diff :
                      ($op[1:0]==2'b10) ? $prod : 
