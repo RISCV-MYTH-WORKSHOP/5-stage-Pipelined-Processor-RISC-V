@@ -44,7 +44,7 @@
          // mux either chooses incremented value of PC 
          // or the branch target if branch is taken
          $pc[31:0] = (>>1$reset) ? '0 : 
-                     (>>1$taken_br) ? >>1$br_tgt_pc :  
+                     (>>1$taken_branch) ? >>1$br_tgt_pc :  
                      >>1$pc + 32'd4;
          $imem_rd_en = !>>1$reset ? 1 : 0;
          // last 2 bits ignored to make it word addressable
@@ -134,9 +134,6 @@
          `BOGUS_USE($is_beq $is_bne $is_blt $is_bge $is_bltu $is_bgeu)
          
          // register file ports
-         $rf_wr_en = 1'b0;
-         $rf_wr_index[4:0] = 5'b0;
-         $rf_wr_data[31:0] = 32'b0;
          $rf_rd_en1 = $rs1_valid;
          $rf_rd_index1[4:0] = $rs1;
          $rf_rd_en2 = $rs2_valid;
@@ -162,8 +159,7 @@
                          $is_blt ? (($src1_value < $src2_value) ^ ($src1_value[31] != $src2_value[31])):
                          $is_bge ? (($src1_value >= $src2_value) ^ ($src1_value[31] != $src2_value[31])):
                          $is_bltu ? ($src1_value < $src2_value):
-                         $is_bgeu ? ($src1_value >= $src2_value):
-                                    1'b0;
+                         $is_bgeu ? ($src1_value >= $src2_value):1'b0;
                                     
          // branch target address
          // PC accepts this value if branch is taken
@@ -174,7 +170,11 @@
       //       other than those specifically expected in the labs. You'll get strange errors for these.
 
    
+   // testbench
+   *passed = |cpu/xreg[10]>>5$value == (1+2+3+4+5+6+7+8+9) ;
+   
    // Assert these to end simulation (before Makerchip cycle limit).
+   
    *passed = *cyc_cnt > 40;
    *failed = 1'b0;
    
@@ -184,11 +184,11 @@
    //  o data memory
    //  o CPU visualization
    |cpu
-      //m4+imem(@1)    // Args: (read stage)
-      //m4+rf(@1, @1)  // Args: (read stage, write stage) - if equal, no register bypass is required
+      m4+imem(@1)    // Args: (read stage)
+      m4+rf(@1, @1)  // Args: (read stage, write stage) - if equal, no register bypass is required
       //m4+dmem(@4)    // Args: (read/write stage)
    
-   //m4+cpu_viz(@4)    // For visualisation, argument should be at least equal to the last stage of CPU logic
+   m4+cpu_viz(@4)    // For visualisation, argument should be at least equal to the last stage of CPU logic
                        // @4 would work for all labs
 \SV
    endmodule
