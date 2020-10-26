@@ -44,8 +44,9 @@
          // mux either chooses incremented value of PC 
          // or the branch target if branch is taken
          $pc[31:0] = (>>1$reset) ? '0 : 
-                     (>>3$valid_taken_br) ? >>3$br_tgt_pc :  
-                     >>1$inc_pc;
+                     (>>3$valid_taken_br) ? (>>3$br_tgt_pc) :
+                     (>>3$valid_load) ? (>>3$pc +32'd4):
+                     (>>1$inc_pc);
          $imem_rd_en = !>>1$reset ? 1 : 0;
          // last 2 bits ignored to make it word addressable
          $imem_rd_addr[31:0] = $pc[M4_IMEM_INDEX_CNT+1:2];
@@ -171,6 +172,7 @@
          $is_sh     = $dec_bits ==? 11'bx_001_0100011;
          $is_sw     = $dec_bits ==? 11'bx_010_0100011;
          $is_slti   = $dec_bits ==? 11'bx_010_0010011;
+         $is_load   = $dec_bits ==? 11'bx_xxx_0000011;
          
          `BOGUS_USE($is_beq $is_bne $is_blt $is_bge $is_bltu $is_bgeu)
          
@@ -232,8 +234,10 @@
                 
          // branch to be taken only when valid is asserted 
          $valid_taken_br = $taken_branch && $valid;
+         // similarly for load
+         $valid_load = $is_load && $valid;
          // increment PC every cycle            
-         $valid = !(>>1$valid_taken_br || >>2$valid_taken_br);
+         $valid = !(>>1$valid_taken_br || >>2$valid_taken_br || >>1$valid_load || >>2$valid_load);
          
          // register write 
          $rf_wr_en = $rd_valid && $rd != 5'b0;
