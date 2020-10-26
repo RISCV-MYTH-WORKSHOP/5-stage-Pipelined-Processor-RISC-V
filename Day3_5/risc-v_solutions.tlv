@@ -240,12 +240,30 @@
          $valid = !(>>1$valid_taken_br || >>2$valid_taken_br || >>1$valid_load || >>2$valid_load);
          
          // register write 
-         $rf_wr_en = $rd_valid && $rd != 5'b0;
+         //enable write 2 invalid instructions after valid load
+         $rf_wr_en = $valid ? (($rd == 5'b0) ? 1'b0 : $rd_valid || $valid_load) : 1'b0;
          //$rf_wr_index[4:0] = $rd;
-         $rf_wr_data[31:0] = $result;
+         // choose between ALU output and data memory from load instruction
+         $rf_wr_data[31:0] = >>2$valid_load ? >>2$ld_data : $result;
       
+      @4
+         // 4th stage
          
+         // Data memory interface
+         // address in computed by ALU
+         // last 2 bits are ignored assuming the addr is word aligned
+         $dmem_addr[3:0] = $result[5:2];
+         // read is enabled for load instructions
+         $dmem_rd_en = $is_load;
+         // write is enabled only for store instructions 
+         //and when instruction is valid
+         $dmem_wr_en = $is_s_instr ? $valid : 0;
+         //store instruction writes 2nd operand to memory
+         $dmem_wr_data[31:0] = $src2_value;
          
+      @5
+         // register writeback
+         $ld_data[31:0] = $dmem_rd_data;
                                  
       // Note: Because of the magic we are using for visualisation, if visualisation is enabled below,
       //       be sure to avoid having unassigned signals (which you might be using for random inputs)
@@ -268,7 +286,7 @@
    |cpu
       m4+imem(@1)    // Args: (read stage)
       m4+rf(@2, @3)  // Args: (read stage, write stage) - if equal, no register bypass is required
-      //m4+dmem(@4)    // Args: (read/write stage)
+      m4+dmem(@4)    // Args: (read/write stage)
    
    //m4+cpu_viz(@4)    // For visualisation, argument should be at least equal to the last stage of CPU logic
                        // @4 would work for all labs
