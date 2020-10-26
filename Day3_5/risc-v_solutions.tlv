@@ -40,8 +40,12 @@
    |cpu
       @0
          $reset = *reset;
-         // next PC
-         $pc[31:0] = >>1$reset ? 32'b0 : >>1$pc + 32'd4;
+         // next PC 
+         // mux either chooses incremented value of PC 
+         // or the branch target if branch is taken
+         $pc[31:0] = (>>1$reset) ? '0 : 
+                     (>>1$taken_br) ? >>1$br_tgt_pc :  
+                     >>1$pc + 32'd4;
          $imem_rd_en = !>>1$reset ? 1 : 0;
          // last 2 bits ignored to make it word addressable
          $imem_rd_addr[31:0] = $pc[M4_IMEM_INDEX_CNT+1:2];
@@ -160,6 +164,10 @@
                          $is_bltu ? ($src1_value < $src2_value):
                          $is_bgeu ? ($src1_value >= $src2_value):
                                     1'b0;
+                                    
+         // branch target address
+         // PC accepts this value if branch is taken
+         $br_tgt_pc[31:0] = $pc + $imm;
                                     
       // Note: Because of the magic we are using for visualisation, if visualisation is enabled below,
       //       be sure to avoid having unassigned signals (which you might be using for random inputs)
