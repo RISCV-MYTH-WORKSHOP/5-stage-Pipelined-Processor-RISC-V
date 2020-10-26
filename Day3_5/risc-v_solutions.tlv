@@ -113,7 +113,7 @@
          ?$rd_valid
             $rd[4:0] = $instr[11:7];
             
-         // decoding individual instructions
+         // determinning the instruction
          
          // define a signal that concatenates the relavant fields
          $dec_bits [10:0] = {$funct7[5], $funct3, $opcode};
@@ -128,6 +128,18 @@
          $is_add = $dec_bits ==? 11'b0_000_0110011;
          
          `BOGUS_USE($is_beq $is_bne $is_blt $is_bge $is_bltu $is_bgeu)
+         
+         // register file ports
+         $rf_wr_en = 1'b0;
+         $rf_wr_index[4:0] = 5'b0;
+         $rf_wr_data[31:0] = 32'b0;
+         $rf_rd_en1 = $rs1_valid;
+         $rf_rd_index1[4:0] = $rs1;
+         $rf_rd_en2 = $rs2_valid;
+         $rf_rd_index2[4:0] = $rs2;
+         
+         $src1_value[31:0] = $rf_rd_data1;
+         $src2_value[31:0] = $rf_rd_data2;
          
       // Note: Because of the magic we are using for visualisation, if visualisation is enabled below,
       //       be sure to avoid having unassigned signals (which you might be using for random inputs)
