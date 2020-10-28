@@ -4,6 +4,6 @@ This repository contains my work during the 5 day workshop conducted by VSD Corp
 We built a RISC-V core with base instruction set using TL-Verilog for RTL implementation. [Makerchip IDE](https://www.makerchip.com/) was used to simulate the TL-Verilog code.
 
 
-Here is the processor that I built 
+Here is the processor I built 
 
 ![pipelined_processor](https://github.com/RISCV-MYTH-WORKSHOP/5-stage-Pipelined-Processor-RISC-V/raw/master/Day3_5/Pipelined_RISC-V.png)
