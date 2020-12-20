@@ -1,5 +1,9 @@
-# RISC-V_MYTH_Workshop
+# RISC-V_MYTH_Workshop - Designing a 5 stage Pipelined processor based on the RISC-V ISA using TL-Verilog
 
-For students of "Microprocessor for You in Thirty Hours" Workshop, offered by for VLSI System Design (VSD) and Redwood EDA, find here accompanying live info and links.
+This repository contains my work during the 5 day workshop conducted by VSD Corp and Redwood EDA. 
+We designed a processor that supports a subset of the RISC-V instruction set using TL-Verilog for RTL implementation. [Makerchip IDE](https://www.makerchip.com/) was used to simulate the TL-Verilog code.
 
-Check the folders for assignments for particular days.
+
+Here is the processor I built 
+
+![pipelined_processor](https://github.com/RISCV-MYTH-WORKSHOP/5-stage-Pipelined-Processor-RISC-V/raw/master/Day3_5/Pipelined_RISC-V.png)
